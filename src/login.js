@@ -121,7 +121,7 @@ async function startServer(){
         res.end(data);
     });
     })
-    server.listen(8787, '0.0.0.0', () => {
+    server.listen(8787, '0.0.0.0',() => {
         
             // console.log('公网 IP:', ip);
         console.log('共享服务启动: http://'+getLocalIP()+':8787'+'/qrcode.png');
@@ -159,11 +159,11 @@ function ask(question){
 
 function selectMedth(){
     // let answer = ask("输入验证方式序号:")
-    rl.question("输入验证方式序号:",(answer)=>{
+    rl.question("输入验证方式序号:",async (answer)=>{
     // rl.question("输入验证方式序号:",(answer)=>{
     if(answer==1){
         try{
-            click(current,"接收短信验证码");
+            await click(current,"接收短信验证码");
             rl.question("请输入验证码",(num)=>{
                 // current.locator('#douyin_login_comp_button_input_id input[name="button-input"]').fill(num);
                 current.locator('input#button-input').nth(1).fill(num);
@@ -176,13 +176,13 @@ function selectMedth(){
         }
     }
     else if(answer==2){
-        click(current,"手机刷脸验证")
+        await click(current,"手机刷脸验证")
     }
     else if(answer==3){
-        click(current,"验证登录密码")
+        await click(current,"验证登录密码")
     }
     else if(answer==4){
-        click(current,"发送短信验证")
+        await click(current,"发送短信验证")
     }
     })
 }
@@ -196,10 +196,10 @@ function selectMedth(){
 // }
 
 
-function click(current,message){  //current为page类型，message是字符串
+async function click(current,message){  //current为page类型，message是字符串
     try{
         var m = current.getByText(message)
-        m.click()
+        await m.click()
     }
     catch(ex){
         console.log("点击失败")
