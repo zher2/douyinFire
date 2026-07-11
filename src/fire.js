@@ -14,7 +14,10 @@ async function fire(){
 
     console.log("获取到的数量"+conversationItems.length)
 
-    D = new Date().getDate()
+    if(global.appConfig.startTrigger===true)
+        D = new Date().getDate() - 1
+    else
+        D = new Date().getDate()
     
     setInterval(async ()=>{
         console.log("定时器检查")

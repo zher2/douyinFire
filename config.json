@@ -1,3 +1,4 @@
 {
-    "startScreenshot":false
+    "startScreenshot":false,
+    "startTrigger":true
 }
