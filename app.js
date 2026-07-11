@@ -27,27 +27,45 @@ class PageManager {
 
     // 初始化浏览器（必须 await 调用）
     async init() {
-        this.browser = await chromium.launch({
-            headless: true,
-            args: ['--no-sandbox', 
-                '--disable-setuid-sandbox',
-                '--js-flags=--max-old-space-size=512',  // 限制渲染进程内存
-            ]
+        // this.browser = await chromium.launch({
+        //     headless: true,
+        //     args: ['--no-sandbox', 
+        //         '--disable-setuid-sandbox',
+        //         '--js-flags=--max-old-space-size=512',  // 限制渲染进程内存
+        //     ]
+        // });
+        this.browser = await chromium.launchPersistentContext('./douyin-user-data', {
+        headless: false,
+        args: [
+            '--no-sandbox',
+            '--disable-dev-shm-usage'
+        ],
+        viewport: { width: 1280, height: 800 },
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)...'
         });
+        // if (context.pages().length === 0) {
+        // page = await context.newPage();
+        // } else {
+        // page = context.pages()[0];
+        // }
+
+        // page.on('crash', () => console.error('❌ Page crashed'));
+        // page.on('close', () => console.error('❌ Page closed'));
         await this.addPage();
     }
 
     async getLoginStatus() {
-        if (this.getPage() == null) {
+        const page = this.getPage();
+        if (!page) return false;
+
+        try {
+            const loginBtn = page.getByText('登录');
+            const count = await loginBtn.count();
+            return count === 0;
+        } catch (e) {
+            console.warn('getLoginStatus error:', e.message);
             return false;
         }
-
-        if (this.loginButton == null) {
-            this.loginButton = this.getPage().getByText('登录');
-        }
-
-        const count = await this.loginButton.count();
-        return count === 0;
     }
 
     async close(){
@@ -56,6 +74,8 @@ class PageManager {
 
     async addPage() {
         const page = await this.browser.newPage();
+        page.on('crash', () => console.error('❌ Page crashed'));
+        page.on('close', () => console.error('❌ Page closed'));
         this.Pages.push(page);
         return page;
     }
