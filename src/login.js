@@ -16,9 +16,9 @@ let loginButton = null;
 async function login(){
     current = global.globalPages.getPage()
     await current.goto('https://www.douyin.com/jingxuan', { waitUntil: 'domcontentloaded' })
-    loginButton = await current.getByText("登录")
+    loginButton = await current.getByText("登录",{exact:true})
 
-    if(loginButton.count()===0)
+    if(await loginButton.count()===0)
         return;
 
     await saveBase64Image(
@@ -69,15 +69,32 @@ async function login(){
     // click(current,"接收短信验证码")
 }
 
-function isLogin(){
-    return !loginButton.count()>0
+async function isLogin(){
+    try{
+        let tloginButton = await current.getByText("登录",{exact:true})
+        return ! await tloginButton.count()>0
+    }
+    catch(ex){
+        return false
+    }
 }
 
 async function saveBase64Image(page, selector, outputPath) {
-  const imgSrc = await page.locator(selector).getAttribute('src');
-  const base64Data = imgSrc.replace(/^data:image\/\w+;base64,/, '');
-  fs.writeFileSync(outputPath, Buffer.from(base64Data, 'base64'));
-  console.log('图片已保存:', outputPath);
+    try{
+        const imgSrc = await page.locator(selector).getAttribute('src');
+        const base64Data = imgSrc.replace(/^data:image\/\w+;base64,/, '');
+        fs.writeFileSync(outputPath, Buffer.from(base64Data, 'base64'));
+        console.log('图片已保存:', outputPath);
+    }
+  catch(ex){
+    console.log("保存超时")
+    if(await isLogin()===true){
+        console.log("一登陆")
+    }
+    else{
+        console.log("未登录"+ex)
+    }
+  }
 }
 
 async function startServer(){
@@ -145,13 +162,18 @@ function selectMedth(){
     rl.question("输入验证方式序号:",(answer)=>{
     // rl.question("输入验证方式序号:",(answer)=>{
     if(answer==1){
-        click(current,"接收短信验证码");
-        rl.question("请输入验证码",(num)=>{
-            // current.locator('#douyin_login_comp_button_input_id input[name="button-input"]').fill(num);
-            current.locator('input#button-input').nth(1).fill(num);
-            console.log("输入完成")
-            current.getByText('验证', { exact: true }).click()
-        })
+        try{
+            click(current,"接收短信验证码");
+            rl.question("请输入验证码",(num)=>{
+                // current.locator('#douyin_login_comp_button_input_id input[name="button-input"]').fill(num);
+                current.locator('input#button-input').nth(1).fill(num);
+                console.log("输入完成")
+                current.getByText('验证', { exact: true }).click()
+            })
+        }
+        catch(ex){
+            console.log("验证码超时")
+        }
     }
     else if(answer==2){
         click(current,"手机刷脸验证")
@@ -175,6 +197,12 @@ function selectMedth(){
 
 
 function click(current,message){  //current为page类型，message是字符串
-    current.getByText(message).click()
+    try{
+        var m = current.getByText(message)
+        m.click()
+    }
+    catch(ex){
+        console.log("点击失败")
+    }
 }
 module.exports = {login}

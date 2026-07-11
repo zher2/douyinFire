@@ -21,8 +21,11 @@ async function fire(){
     
     setInterval(async ()=>{
         console.log("定时器检查")
-        if(D === new Date().getDate())
+        if(D === new Date().getDate()){
+            console.log("获取到的数量"+conversationItems.length)
             return
+        }
+            
         else{
             D = new Date().getDate()
         }

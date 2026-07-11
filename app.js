@@ -35,7 +35,7 @@ class PageManager {
         //     ]
         // });
         this.browser = await chromium.launchPersistentContext('./douyin-user-data', {
-        headless: true,
+        headless: false,
         args: [
             '--no-sandbox',
             '--disable-dev-shm-usage'

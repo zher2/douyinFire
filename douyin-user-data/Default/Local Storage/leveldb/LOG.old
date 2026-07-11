@@ -1,0 +1,6 @@
+2026/07/11-14:27:07.273 4916 Reusing MANIFEST /home/zh/project/autoFire/douyin-user-data/Default/Local Storage/leveldb/MANIFEST-000001
+2026/07/11-14:27:07.277 4916 Recovering log #32
+2026/07/11-14:27:07.278 4916 Reusing old log /home/zh/project/autoFire/douyin-user-data/Default/Local Storage/leveldb/000032.log 
+2026/07/11-14:28:07.280 4918 Level-0 table #36: started
+2026/07/11-14:28:07.287 4918 Level-0 table #36: 25200 bytes OK
+2026/07/11-14:28:07.294 4918 Delete type=0 #32
